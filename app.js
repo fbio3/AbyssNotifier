@@ -1,6 +1,6 @@
 // Conectando ao seu banco de dados
-const supabaseUrl = 'SUA_URL_AQUI';
-const supabaseKey = 'SUA_CHAVE_AQUI';
+const supabaseUrl = 'https://hertafbgdkkhafaarvya.supabase.co/rest/v1/';
+const supabaseKey = 'sb_publishable_DoPdxwmjvWSI9PRNSGFhMw__mHvz2fu';
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // Verifica se já tem alguém logado ao abrir a página
