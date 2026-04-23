@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abyss Notifier</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #1a1a2e; color: white; padding: 20px; }
+        .hidden { display: none; }
+        input, button, select { padding: 10px; margin: 5px 0; border-radius: 5px; }
+        button { background: #e94560; color: white; border: none; cursor: pointer; }
+        .anime-card { background: #16213e; padding: 10px; margin-top: 10px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <h1>🎬 Anime Tracker</h1>
+
+    <div id="login-section">
+        <h3>Login / Cadastro</h3>
+        <input type="email" id="email" placeholder="Seu e-mail">
+        <input type="password" id="senha" placeholder="Sua senha">
+        <button onclick="fazerLogin()">Entrar / Cadastrar</button>
+        <p id="msg-login"></p>
+    </div>
+
+    <div id="app-section" class="hidden">
+        <button onclick="sair()">Sair da Conta</button>
+        
+        <h3>Adicionar Novo Anime</h3>
+        <input type="text" id="nome-anime" placeholder="Nome do Anime">
+        <input type="text" id="foto-anime" placeholder="URL da Foto (opcional)">
+        <select id="dia-semana">
+            <option value="Segunda">Segunda-feira</option>
+            <option value="Terça">Terça-feira</option>
+            <option value="Quarta">Quarta-feira</option>
+            <option value="Quinta">Quinta-feira</option>
+            <option value="Sexta">Sexta-feira</option>
+            <option value="Sábado">Sábado</option>
+            <option value="Domingo">Domingo</option>
+        </select>
+        <button onclick="adicionarAnime()">Adicionar</button>
+
+        <h3>Meus Animes</h3>
+        <div id="lista-animes"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
