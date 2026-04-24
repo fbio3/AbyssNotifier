@@ -1,7 +1,9 @@
 // 1. Conexão com o Supabase
 const supabaseUrl = 'https://hertafbgdkkhafaarvya.supabase.co';
 const supabaseKey = 'sb_publishable_DoPdxwmjvWSI9PRNSGFhMw__mHvz2fu';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// MUDANÇA AQUI: Trocamos o nome de "supabase" para "supabaseClient"
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // 2. Função para alternar as telas
 function mostrarTela(telaId) {
@@ -14,7 +16,7 @@ function mostrarTela(telaId) {
 
 // 3. Verifica se o usuário já está logado ao abrir a página
 async function verificarSessao() {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
         mostrarTela('app-section');
         carregarAnimes(session.user.id);
@@ -30,7 +32,7 @@ async function entrar() {
 
     if(!email || !password) return alert("Preencha e-mail e senha!");
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
     
     if (error) {
         alert("Erro ao entrar: " + error.message);
@@ -47,7 +49,7 @@ async function cadastrar() {
     if(!email || !password) return alert("Preencha e-mail e senha!");
     if(password.length < 6) return alert("A senha deve ter pelo menos 6 caracteres.");
 
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
     
     if (error) {
         alert("Erro ao criar conta: " + error.message);
@@ -59,7 +61,7 @@ async function cadastrar() {
 
 // 6. Sair da Conta
 async function sair() {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     window.location.reload();
 }
 
@@ -71,9 +73,9 @@ async function adicionarAnime() {
     
     if(!nome) return alert("O nome do anime é obrigatório!");
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await supabaseClient.auth.getUser();
 
-    const { error } = await supabase.from('animes').insert([
+    const { error } = await supabaseClient.from('animes').insert([
         { user_id: user.id, nome: nome, foto_url: foto, dia_semana: dia }
     ]);
 
@@ -88,7 +90,7 @@ async function adicionarAnime() {
 
 // 8. Carregar Animes na Tela
 async function carregarAnimes(userId) {
-    const { data: animes, error } = await supabase.from('animes').select('*');
+    const { data: animes, error } = await supabaseClient.from('animes').select('*');
     const lista = document.getElementById('lista-animes');
     lista.innerHTML = ''; 
 
