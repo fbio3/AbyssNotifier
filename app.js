@@ -1,85 +1,110 @@
-// Conectando ao seu banco de dados
+// 1. Conexão com o Supabase
 const supabaseUrl = 'https://hertafbgdkkhafaarvya.supabase.co/rest/v1/';
 const supabaseKey = 'sb_publishable_DoPdxwmjvWSI9PRNSGFhMw__mHvz2fu';
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-// Verifica se já tem alguém logado ao abrir a página
+// 2. Função para alternar as telas
+function mostrarTela(telaId) {
+    document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('cadastro-section').classList.add('hidden');
+    document.getElementById('app-section').classList.add('hidden');
+    
+    document.getElementById(telaId).classList.remove('hidden');
+}
+
+// 3. Verifica se o usuário já está logado ao abrir a página
 async function verificarSessao() {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-        document.getElementById('login-section').classList.add('hidden');
-        document.getElementById('app-section').classList.remove('hidden');
+        mostrarTela('app-section');
         carregarAnimes(session.user.id);
+    } else {
+        mostrarTela('login-section');
     }
 }
 
-// Função de Login/Cadastro
-async function fazerLogin() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('senha').value;
-    const msg = document.getElementById('msg-login');
+// 4. Fazer Login
+async function entrar() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-senha').value;
 
-    msg.innerText = "Carregando...";
-    
-    // Tenta logar ou criar conta automaticamente
+    if(!email || !password) return alert("Preencha e-mail e senha!");
+
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     
     if (error) {
-        // Se a conta não existe, a gente cria!
-        const { error: signUpError } = await supabase.auth.signUp({ email, password });
-        if (signUpError) {
-            msg.innerText = "Erro: " + signUpError.message;
-        } else {
-            msg.innerText = "Conta criada! Verifique seu e-mail para confirmar.";
-        }
+        alert("Erro ao entrar: " + error.message);
     } else {
-        window.location.reload(); // Recarrega a página logado
+        window.location.reload(); // Recarrega a página para entrar no painel
     }
 }
 
-// Função de Sair
+// 5. Criar Conta
+async function cadastrar() {
+    const email = document.getElementById('cad-email').value;
+    const password = document.getElementById('cad-senha').value;
+
+    if(!email || !password) return alert("Preencha e-mail e senha!");
+    if(password.length < 6) return alert("A senha deve ter pelo menos 6 caracteres.");
+
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    
+    if (error) {
+        alert("Erro ao criar conta: " + error.message);
+    } else {
+        alert("Conta criada com sucesso! Você já pode fazer login.");
+        mostrarTela('login-section');
+    }
+}
+
+// 6. Sair da Conta
 async function sair() {
     await supabase.auth.signOut();
     window.location.reload();
 }
 
-// Adicionar Anime no Banco
+// 7. Adicionar Anime no Banco
 async function adicionarAnime() {
     const nome = document.getElementById('nome-anime').value;
     const foto = document.getElementById('foto-anime').value;
     const dia = document.getElementById('dia-semana').value;
     
+    if(!nome) return alert("O nome do anime é obrigatório!");
+
     const { data: { user } } = await supabase.auth.getUser();
 
     const { error } = await supabase.from('animes').insert([
         { user_id: user.id, nome: nome, foto_url: foto, dia_semana: dia }
     ]);
 
-    if (!error) {
-        alert("Anime adicionado!");
-        carregarAnimes(user.id); // Atualiza a lista
-    } else {
+    if (error) {
         alert("Erro ao adicionar: " + error.message);
+    } else {
+        alert("Anime adicionado!");
+        document.getElementById('nome-anime').value = ''; // Limpa o campo
+        carregarAnimes(user.id); // Atualiza a lista na hora
     }
 }
 
-// Carregar Animes na Tela
+// 8. Carregar Animes na Tela
 async function carregarAnimes(userId) {
     const { data: animes, error } = await supabase.from('animes').select('*');
     const lista = document.getElementById('lista-animes');
-    lista.innerHTML = ''; // Limpa a lista antes de carregar
+    lista.innerHTML = ''; 
 
-    if (animes) {
+    if (animes && animes.length > 0) {
         animes.forEach(anime => {
             lista.innerHTML += `
                 <div class="anime-card">
-                    <h4>${anime.nome} (${anime.dia_semana})</h4>
-                    ${anime.foto_url ? `<img src="${anime.foto_url}" width="100">` : ''}
+                    <h4 style="margin: 0 0 10px 0;">${anime.nome} <span style="color: #58a6ff;">(${anime.dia_semana})</span></h4>
+                    ${anime.foto_url ? `<img src="${anime.foto_url}" width="100" style="border-radius: 5px;">` : ''}
                 </div>
             `;
         });
+    } else {
+        lista.innerHTML = '<p>Nenhum anime adicionado ainda.</p>';
     }
 }
 
-// Inicia o app
+// Inicia o fluxo
 verificarSessao();

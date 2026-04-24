@@ -3,47 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abyss Notifier</title>
+    <title>AbyssNotifier - Anime Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Arial, sans-serif; background: #1a1a2e; color: white; padding: 20px; }
-        .hidden { display: none; }
-        input, button, select { padding: 10px; margin: 5px 0; border-radius: 5px; }
-        button { background: #e94560; color: white; border: none; cursor: pointer; }
-        .anime-card { background: #16213e; padding: 10px; margin-top: 10px; border-radius: 8px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0d1117; color: #c9d1d9; padding: 20px; text-align: center; }
+        .hidden { display: none !important; }
+        .container { max-width: 400px; margin: 0 auto; background: #161b22; padding: 30px; border-radius: 10px; border: 1px solid #30363d; }
+        input, select { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #30363d; background: #0d1117; color: white; }
+        button { width: 95%; background: #238636; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #2ea043; }
+        .btn-secundario { background: transparent; border: 1px solid #8b949e; color: #8b949e; margin-top: 15px; }
+        .btn-secundario:hover { background: #30363d; }
+        .anime-card { background: #21262d; padding: 15px; margin-top: 15px; border-radius: 8px; text-align: left; border: 1px solid #30363d; }
+        a { color: #58a6ff; cursor: pointer; text-decoration: underline; font-size: 0.9em; }
     </style>
 </head>
 <body>
 
-    <h1>🎬 Anime Tracker</h1>
+    <h1>🎬 AbyssNotifier</h1>
 
-    <div id="login-section">
-        <h3>Login / Cadastro</h3>
-        <input type="email" id="email" placeholder="Seu e-mail">
-        <input type="password" id="senha" placeholder="Sua senha">
-        <button onclick="fazerLogin()">Entrar / Cadastrar</button>
-        <p id="msg-login"></p>
+    <div id="login-section" class="container">
+        <h2>Entrar</h2>
+        <input type="email" id="login-email" placeholder="Seu e-mail">
+        <input type="password" id="login-senha" placeholder="Sua senha">
+        <button onclick="entrar()">Fazer Login</button>
+        <p>Não tem uma conta? <a onclick="mostrarTela('cadastro-section')">Crie uma aqui</a></p>
     </div>
 
-    <div id="app-section" class="hidden">
-        <button onclick="sair()">Sair da Conta</button>
-        
-        <h3>Adicionar Novo Anime</h3>
-        <input type="text" id="nome-anime" placeholder="Nome do Anime">
-        <input type="text" id="foto-anime" placeholder="URL da Foto (opcional)">
-        <select id="dia-semana">
-            <option value="Segunda">Segunda-feira</option>
-            <option value="Terça">Terça-feira</option>
-            <option value="Quarta">Quarta-feira</option>
-            <option value="Quinta">Quinta-feira</option>
-            <option value="Sexta">Sexta-feira</option>
-            <option value="Sábado">Sábado</option>
-            <option value="Domingo">Domingo</option>
-        </select>
-        <button onclick="adicionarAnime()">Adicionar</button>
+    <div id="cadastro-section" class="container hidden">
+        <h2>Criar Conta</h2>
+        <input type="email" id="cad-email" placeholder="Digite um e-mail">
+        <input type="password" id="cad-senha" placeholder="Crie uma senha (mínimo 6 caracteres)">
+        <button onclick="cadastrar()">Cadastrar</button>
+        <p>Já tem uma conta? <a onclick="mostrarTela('login-section')">Entre aqui</a></p>
+    </div>
 
-        <h3>Meus Animes</h3>
+    <div id="app-section" class="container hidden" style="max-width: 600px;">
+        <h2>Meu Painel</h2>
+        
+        <div style="background: #0d1117; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h3>Adicionar Anime</h3>
+            <input type="text" id="nome-anime" placeholder="Nome do Anime">
+            <input type="text" id="foto-anime" placeholder="URL da Foto (opcional)">
+            <select id="dia-semana">
+                <option value="Segunda">Segunda-feira</option>
+                <option value="Terça">Terça-feira</option>
+                <option value="Quarta">Quarta-feira</option>
+                <option value="Quinta">Quinta-feira</option>
+                <option value="Sexta">Sexta-feira</option>
+                <option value="Sábado">Sábado</option>
+                <option value="Domingo">Domingo</option>
+            </select>
+            <button onclick="adicionarAnime()">Adicionar à lista</button>
+        </div>
+
+        <h3>Meus Animes Atuais</h3>
         <div id="lista-animes"></div>
+
+        <button class="btn-secundario" onclick="sair()">Sair da Conta</button>
     </div>
 
     <script src="app.js"></script>
