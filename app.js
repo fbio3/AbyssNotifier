@@ -1,5 +1,5 @@
 // 1. Conexão com o Supabase
-const supabaseUrl = 'https://hertafbgdkkhafaarvya.supabase.co/rest/v1/';
+const supabaseUrl = 'https://hertafbgdkkhafaarvya.supabase.co';
 const supabaseKey = 'sb_publishable_DoPdxwmjvWSI9PRNSGFhMw__mHvz2fu';
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
