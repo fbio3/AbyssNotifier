@@ -6,45 +6,87 @@
     <title>AbyssNotifier - Anime Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0d1117; color: #c9d1d9; padding: 20px; text-align: center; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0d1117; color: #c9d1d9; margin: 0; padding: 0; }
         .hidden { display: none !important; }
-        .container { max-width: 400px; margin: 0 auto; background: #161b22; padding: 30px; border-radius: 10px; border: 1px solid #30363d; }
-        input, select { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #30363d; background: #0d1117; color: white; }
-        button { width: 95%; background: #238636; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        button:hover { background: #2ea043; }
-        .btn-secundario { background: transparent; border: 1px solid #8b949e; color: #8b949e; margin-top: 15px; }
-        .btn-secundario:hover { background: #30363d; }
-        .anime-card { background: #21262d; padding: 15px; margin-top: 15px; border-radius: 8px; text-align: left; border: 1px solid #30363d; }
+        .container { max-width: 600px; margin: 40px auto; padding: 20px; text-align: center; }
+        .box { background: #161b22; padding: 30px; border-radius: 10px; border: 1px solid #30363d; margin-bottom: 20px; }
+        
+        /* Menu de Navegação */
+        nav { background: #161b22; padding: 15px; text-align: center; border-bottom: 1px solid #30363d; }
+        nav button { background: transparent; border: 1px solid #58a6ff; color: #58a6ff; margin: 0 5px; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        nav button:hover { background: #58a6ff; color: #0d1117; }
+        nav button.sair { border-color: #f85149; color: #f85149; }
+        nav button.sair:hover { background: #f85149; color: white; }
+
+        input, select { width: 90%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #30363d; background: #0d1117; color: white; }
+        .btn-principal { width: 95%; background: #238636; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-principal:hover { background: #2ea043; }
+        
+        /* Estilo dos Cards de Anime */
+        .anime-card { background: #21262d; padding: 15px; margin-top: 15px; border-radius: 8px; text-align: left; border: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center;}
+        .anime-info { flex-grow: 1; margin-right: 15px; }
+        .anime-info h4 { margin: 0 0 5px 0; font-size: 1.2em; color: white; }
+        .anime-info p { margin: 3px 0; font-size: 0.9em; color: #8b949e; }
+        .badge { background: #58a6ff; color: #0d1117; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
+        .badge-finalizado { background: #238636; }
+        
+        /* Botões de Ação do Card */
+        .acoes-btn { display: flex; flex-direction: column; gap: 5px; }
+        .btn-pequeno { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8em; color: white; }
+        .btn-edit { background: #d29922; }
+        .btn-finish { background: #238636; }
+        .btn-del { background: #da3633; }
+
         a { color: #58a6ff; cursor: pointer; text-decoration: underline; font-size: 0.9em; }
     </style>
 </head>
 <body>
 
-    <h1>🎬 AbyssNotifier</h1>
+    <nav id="menu-topo" class="hidden">
+        <button onclick="mudarAba('lista-section')">📺 Meus Animes</button>
+        <button onclick="prepararAdicao()">➕ Adicionar Novo</button>
+        <button class="sair" onclick="sair()">Sair</button>
+    </nav>
 
-    <div id="login-section" class="container">
-        <h2>Entrar</h2>
-        <input type="email" id="login-email" placeholder="Seu e-mail">
-        <input type="password" id="login-senha" placeholder="Sua senha">
-        <button onclick="entrar()">Fazer Login</button>
-        <p>Não tem uma conta? <a onclick="mostrarTela('cadastro-section')">Crie uma aqui</a></p>
+    <div id="auth-container" class="container">
+        <h1>🎬 AbyssNotifier</h1>
+        <div id="login-section" class="box">
+            <h2>Entrar</h2>
+            <input type="email" id="login-email" placeholder="Seu e-mail">
+            <input type="password" id="login-senha" placeholder="Sua senha">
+            <button class="btn-principal" onclick="entrar()">Fazer Login</button>
+            <p>Não tem uma conta? <a onclick="mostrarAuth('cadastro')">Crie uma aqui</a></p>
+        </div>
+
+        <div id="cadastro-section" class="box hidden">
+            <h2>Criar Conta</h2>
+            <input type="email" id="cad-email" placeholder="Digite um e-mail">
+            <input type="password" id="cad-senha" placeholder="Crie uma senha (mínimo 6)">
+            <button class="btn-principal" onclick="cadastrar()">Cadastrar</button>
+            <p>Já tem uma conta? <a onclick="mostrarAuth('login')">Entre aqui</a></p>
+        </div>
     </div>
 
-    <div id="cadastro-section" class="container hidden">
-        <h2>Criar Conta</h2>
-        <input type="email" id="cad-email" placeholder="Digite um e-mail">
-        <input type="password" id="cad-senha" placeholder="Crie uma senha (mínimo 6 caracteres)">
-        <button onclick="cadastrar()">Cadastrar</button>
-        <p>Já tem uma conta? <a onclick="mostrarTela('login-section')">Entre aqui</a></p>
-    </div>
-
-    <div id="app-section" class="container hidden" style="max-width: 600px;">
-        <h2>Meu Painel</h2>
+    <div id="app-container" class="container hidden">
         
-        <div style="background: #0d1117; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-            <h3>Adicionar Anime</h3>
-            <input type="text" id="nome-anime" placeholder="Nome do Anime">
-            <input type="text" id="foto-anime" placeholder="URL da Foto (opcional)">
+        <div id="lista-section">
+            <h2>Meus Animes Atuais</h2>
+            <div id="lista-animes"></div>
+        </div>
+
+        <div id="form-section" class="box hidden">
+            <h2 id="titulo-form">Adicionar Anime</h2>
+            <input type="hidden" id="anime-id"> 
+
+            <input type="text" id="nome-anime" placeholder="Nome do Anime (Obrigatório)">
+            <input type="text" id="foto-anime" placeholder="URL da Foto (Opcional)">
+            
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 5px;">
+                <input type="number" id="ep-atual" placeholder="Ep. Atual" style="width: 45%;">
+                <input type="number" id="ep-total" placeholder="Total de Eps." style="width: 45%;">
+            </div>
+
+            <p style="text-align: left; margin: 10px 0 0 5%; font-size: 0.9em;">Notificações:</p>
             <select id="dia-semana">
                 <option value="Segunda">Segunda-feira</option>
                 <option value="Terça">Terça-feira</option>
@@ -54,13 +96,17 @@
                 <option value="Sábado">Sábado</option>
                 <option value="Domingo">Domingo</option>
             </select>
-            <button onclick="adicionarAnime()">Adicionar à lista</button>
+            
+            <input type="time" id="hora-notificacao" title="Horário da Notificação">
+            
+            <select id="tipo-notificacao">
+                <option value="email">Notificar via E-mail</option>
+                <option value="discord">Notificar via Discord</option>
+            </select>
+
+            <button class="btn-principal" onclick="salvarAnime()">Salvar Anime</button>
         </div>
 
-        <h3>Meus Animes Atuais</h3>
-        <div id="lista-animes"></div>
-
-        <button class="btn-secundario" onclick="sair()">Sair da Conta</button>
     </div>
 
     <script src="app.js"></script>
