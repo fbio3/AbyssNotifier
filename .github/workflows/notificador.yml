@@ -2,20 +2,20 @@ name: Disparar Notificacoes
 
 on:
   schedule:
-    - cron: '0 * * * *' # Roda no minuto zero de todas as horas (Ex: 12:00, 13:00, 14:00)
-  workflow_dispatch: # Permite que você clique em um botão no GitHub para testar na hora!
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
   rodar-robo:
     runs-on: ubuntu-latest
     steps:
       - name: Baixar o código
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configurar Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Executar Notificador
         env:
